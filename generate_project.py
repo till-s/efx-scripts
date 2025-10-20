@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 # Unfortunately, efinix does not fully support scripting.
 # At least their interface designer does, however.
 # We use it to
@@ -67,4 +67,8 @@ design.save()
 shutil.copy( '{}/outflow/{}.pt.sdc'.format(output_dir, project_name),
              '{}/{}.pt.sdc'.format(output_dir, project_name) )
 
-os.system('./update_git_version_pkg.sh')
+here=os.path.dirname(os.path.abspath(__file__))
+if 0 == len(here):
+  here = '.'
+
+os.system(here+'/update_git_version_pkg.sh')
