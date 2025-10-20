@@ -2,8 +2,22 @@
 from   lxml import etree as ET
 from   glob import glob
 import os
+import sys
+import getopt
 
-prjxml='scope_test_v2.xml'
+prjxml = None
+
+opts, args = getopt.getopt(sys.argv[1:], "hp:")
+for o in opts:
+  if (o[0] == "-h"):
+    print("usage: {} [-h] -p project_xml".format(sys.argv[0]))
+    sys.exit(0)
+  elif (o[0] == "-p"):
+    prjxml = o[1]
+
+if prjxml is None:
+  print("project xml name missing; use -p")
+  sys.exit(1)
 
 def get_seed(xmlnam):
   etree = ET.parse( xmlnam )
