@@ -41,10 +41,10 @@ perixmlname="`basename ${xmlname} .xml`.peri.xml"
 submodules=$(git submodule status | awk '{print $2}')
 
 if [[ "$0" =~ ^/.* ]] ; then
-  scripuptdir="${scriptdir}"
+  scriptupdir="${scriptdir}"
 else
   # find scripts from the subdir where we clone the project
-  scripuptdir="../../${scriptdir}"
+  scriptupdir="../../${scriptdir}"
 fi
 
 mkdir -p explore
