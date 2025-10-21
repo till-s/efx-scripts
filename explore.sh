@@ -13,15 +13,13 @@
 # Eventually, we have timing reports from the desings
 # which do have the git-hash included.
 
-for nam in *.xml; do
-  if [[ "${nam}" =~ ^[^.]*[.]xml ]] ; then
-    xmlname=${nam}
-    break
-  elif ! [[ "${nam}" =~ .*[.]peri([.].*)?[.]xml ]] ; then
-    xmlname=${nam}
-    break
-  fi
-done
+scriptdir="`dirname $0`"
+if [[ "$0" =~ ^/.* ]] ; then
+  scripuptdir="${scriptdir}"
+else
+  # find scripts from the subdir where we clone the project
+  scripuptdir="../../${scriptdir}"
+fi
 
 while getopts "hp:s:" opt; do
   case $opt in
@@ -37,18 +35,16 @@ while getopts "hp:s:" opt; do
   esac
 done
 
+if [ -z "$xmlname" ]; then
+  xmlname=$(${scriptdir}/defaultProject.py)
+fi
+
 echo "Using project ${xmlname}"
+exit 0
 
 constraints="`basename ${xmlname} .xml`.pt.sdc"
 perixmlname="`basename ${xmlname} .xml`.peri.xml"
 
-
-here="`dirname $0`"
-if [[ "$0" =~ ^/.* ]] ; then
-  scriptdir="`dirname $0`"
-else
-  scriptdir="../../`dirname $0`"
-fi
 
 submodules=$(git submodule status | awk '{print $2}')
 
@@ -60,7 +56,7 @@ for i in ${seeds}; do
     fi
     pushd swipe_${i}
     if ! [ -e ${constraints} ] || ! [ -e ${perixmlname} ]; then
-      ${scriptdir}/generate_project.py
+      ${scriptupdir}/generate_project.py
     fi
     for m in ${submodules}; do
       git config --replace-all "submodule.modules/`basename ${m}`.url" "../../${m}"
@@ -71,7 +67,7 @@ for i in ${seeds}; do
     if ! git diff-index --quiet HEAD --; then
       git commit -m "Seed ${i}" ${xmlname}
     fi
-    ${scriptdir}/update_git_version_pkg.sh
+    ${scriptupdir}/update_git_version_pkg.sh
     efx_run ${xmlname} &
     popd
 done

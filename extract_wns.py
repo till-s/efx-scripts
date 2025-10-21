@@ -4,8 +4,12 @@ from   glob import glob
 import os
 import sys
 import getopt
+import defaultProject
 
-prjxml = None
+try:
+  prjxml, prjnam = defaultProject.getProjectXml()
+except RuntimeError:
+  prjxml = None
 
 opts, args = getopt.getopt(sys.argv[1:], "hp:")
 for o in opts:

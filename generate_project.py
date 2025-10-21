@@ -22,17 +22,9 @@ import sys
 import pprint
 import shutil
 from   lxml import etree as ET
+import defaultProject
 
-# Must be run from the project directory
-projmatch = None
-for xml in glob.glob( '*.xml' ): 
-  m = re.match( '^([^.]*)[.]xml$', xml )
-  if not m is None:
-    if not projmatch is None:
-      raise RuntimeError( "project XML not found; too many <xxx.xml> files in this directory" )
-    projmatch = m
-if projmatch is None:
-  raise RuntimeError("project XML not found; expect to run in the project directory and find one '<proj_name>.xml' file")
+project_xml, project_name = defaultProject.getProjectXml()
 
 # Tell python where to get Interface Designer's API package
 pt_home = os.environ['EFXPT_HOME']
@@ -48,9 +40,8 @@ device = DeviceAPI(is_verbose)
 
 # Create empty design
 # FIXME - could extract device from project XML
-etree = ET.parse( projmatch.group(0) )
+etree = ET.parse( project_xml )
 device_name = etree.find('.//{http://www.efinixinc.com/enf_proj}device').get('name')
-project_name = projmatch.group(1)
 output_dir = "."  # New pt_demo periphery design will be generated in this directory
 design.create(project_name, device_name, output_dir)
 
