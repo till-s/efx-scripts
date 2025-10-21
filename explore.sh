@@ -13,14 +13,6 @@
 # Eventually, we have timing reports from the desings
 # which do have the git-hash included.
 
-scriptdir="`dirname $0`"
-if [[ "$0" =~ ^/.* ]] ; then
-  scripuptdir="${scriptdir}"
-else
-  # find scripts from the subdir where we clone the project
-  scripuptdir="../../${scriptdir}"
-fi
-
 while getopts "hp:s:" opt; do
   case $opt in
     p)
@@ -35,18 +27,25 @@ while getopts "hp:s:" opt; do
   esac
 done
 
+scriptdir="`dirname $0`"
 if [ -z "$xmlname" ]; then
   xmlname=$(${scriptdir}/defaultProject.py)
 fi
 
 echo "Using project ${xmlname}"
-exit 0
 
 constraints="`basename ${xmlname} .xml`.pt.sdc"
 perixmlname="`basename ${xmlname} .xml`.peri.xml"
 
 
 submodules=$(git submodule status | awk '{print $2}')
+
+if [[ "$0" =~ ^/.* ]] ; then
+  scripuptdir="${scriptdir}"
+else
+  # find scripts from the subdir where we clone the project
+  scripuptdir="../../${scriptdir}"
+fi
 
 mkdir -p explore
 pushd explore
