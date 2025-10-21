@@ -41,10 +41,12 @@ perixmlname="`basename ${xmlname} .xml`.peri.xml"
 submodules=$(git submodule status | awk '{print $2}')
 
 if [[ "$0" =~ ^/.* ]] ; then
+  scriptupupdir="${scriptdir}"
   scriptupdir="${scriptdir}"
 else
   # find scripts from the subdir where we clone the project
-  scriptupdir="../../${scriptdir}"
+  scriptupupdir="../../${scriptdir}"
+  scriptupdir="../${scriptdir}"
 fi
 
 mkdir -p explore
@@ -55,7 +57,7 @@ for i in ${seeds}; do
     fi
     pushd swipe_${i}
     if ! [ -e ${constraints} ] || ! [ -e ${perixmlname} ]; then
-      ${scriptupdir}/generate_project.py
+      ${scriptupupdir}/generate_project.py
     fi
     for m in ${submodules}; do
       git config --replace-all "submodule.modules/`basename ${m}`.url" "../../${m}"
@@ -66,8 +68,9 @@ for i in ${seeds}; do
     if ! git diff-index --quiet HEAD --; then
       git commit -m "Seed ${i}" ${xmlname}
     fi
-    ${scriptupdir}/update_git_version_pkg.sh
+    ${scriptupupdir}/update_git_version_pkg.sh
     efx_run ${xmlname} &
     popd
 done
 wait
+${scriptupdir}/extract_wns.py -p ${xmlname}
