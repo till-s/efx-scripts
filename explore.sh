@@ -21,11 +21,20 @@ while getopts "hp:s:" opt; do
     s)
       seeds="$OPTARG"
     ;;
-    *) echo "Usage: $0 [-h] [-p <project_xml>]   [-s <seeds>]"
+    *) echo "Usage: $0 [-h] [-p <project_xml>] [-s <seeds>]"
        exit 0
     ;;
   esac
 done
+
+if [ "${EFXPT_HOME}"xx = xx ]; then
+  echo "EFXPT_HOME not set; source efinix environment (<efx_top>/bin/setup.sh), please"
+  exit 1
+fi
+
+if [ -z "${seeds}" ]; then
+  seeds="1 2 3 4 5 6 7 8 9 10"
+fi
 
 scriptdir="`dirname $0`"
 if [ -z "$xmlname" ]; then
