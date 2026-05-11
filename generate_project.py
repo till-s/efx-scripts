@@ -27,7 +27,12 @@ import defaultProject
 project_xml, project_name = defaultProject.getProjectXml()
 
 # Tell python where to get Interface Designer's API package
-pt_home = os.environ['EFXPT_HOME']
+try:
+  pt_home = os.environ['EFXPT_HOME']
+except KeyError as e:
+  print("ERROR: EFXPT_HOME not set; source efinix environment (<efx_top>/bin/setup.sh) before running this script, please")
+  sys.exit(1)
+
 sys.path.append(pt_home + "/bin")
 
 from api_service.design import DesignAPI  # Get access to design database API
