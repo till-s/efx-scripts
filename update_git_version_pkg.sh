@@ -2,8 +2,9 @@
 
 pkgfnam="GitVersionPkg.vhd"
 pkgdnam="."
+force=""
 
-while getopts "hf:d:" opt; do
+while getopts "hFf:d:" opt; do
   case $opt in
     f)
       pkgfnam="$OPTARG"
@@ -11,9 +12,14 @@ while getopts "hf:d:" opt; do
     d) 
       pkgdnam="$OPTARG"
     ;;
-    *) echo "Usage: $0 [-h] [-f <output_filename>] [-d <output_dir>]"
+    F)
+      force="yes"
+    ;;
+
+    *) echo "Usage: $0 [-h] [-F] [-f <output_filename>] [-d <output_dir>]"
        echo " -f <output_filename> (defaults to 'GitVersionPkg.vhd')"
        echo " -d <output_dir>      (defaults to '.')"
+       echo " -F                   FORCE (even if the working-tree is dirty)"
        exit 0
     ;;
   esac
@@ -22,7 +28,7 @@ done
 f="$pkgdnam/$pkgfnam"
 ver="00000000"
 
-if git diff-index --quiet HEAD -- ; then
+if git diff-index --quiet HEAD -- || [ "${force}XX" == "yesXX" ] ; then
   ver=`git rev-parse --short=8 HEAD`
 else
   echo "HEAD seems to be dirty; using version 00000000"
